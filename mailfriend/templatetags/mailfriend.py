@@ -2,8 +2,6 @@ from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 
-from mailfriend.models import *
-
 register = template.Library()
 
 @register.simple_tag
