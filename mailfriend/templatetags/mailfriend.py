@@ -16,7 +16,7 @@ def get_mail_to_friend_url(obj):
   if hasattr(obj, 'get_absolute_url'):
     try:
       content_type = ContentType.objects.get(app_label=obj._meta.app_label, model=obj._meta.module_name)
-      return reverse('savoy.contrib.mailfriend.views.mail_item_to_friend_form', args=[ content_type.id, obj.id ])
+      return reverse('mailfriend.views.mail_item_to_friend_form', args=[ content_type.id, obj.id ])
     except:
       return ''
   else:
