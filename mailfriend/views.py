@@ -16,14 +16,15 @@ try:
 except ImportError:
   from django.core.mail import send_mail
 
-from mailfriend.models import *
-from mailfriend.forms import *
+from mailfriend.baseconv import base62
+from mailfriend.forms import MailedItemForm
+from mailfriend.models import MailedItem
 
 @login_required
 def mail_item_to_friend_form(request, content_type_id, object_id):
-  content_type = ContentType.objects.get(pk=content_type_id)
+  content_type = ContentType.objects.get(pk=base62.to_decimal(content_type_id))
   try:
-    obj = content_type.get_object_for_this_type(pk=object_id)
+    obj = content_type.get_object_for_this_type(pk=base62.to_decimal(object_id))
     obj_url = obj.get_absolute_url()
   except ObjectDoesNotExist:
     raise Http404, "Invalid -- the object ID was invalid"
@@ -34,7 +35,7 @@ def mail_item_to_friend_form(request, content_type_id, object_id):
     'object': obj,
   }
   return render_to_response('mailfriend/form.html', context, context_instance=RequestContext(request))
-  
+
 
 @login_required
 def mail_item_to_friend_send(request):
@@ -52,7 +53,7 @@ def mail_item_to_friend_send(request):
   sending_user      = request.user
   subject           = "You have received a link"
   message_template  = loader.get_template('mailfriend/email_message.txt')
-  message_context   = Context({ 
+  message_context   = Context({
       'site': site,
       'site_url': site_url,
       'object': obj,
@@ -73,6 +74,3 @@ def mail_item_to_friend_send(request):
   new_mailed_item   = form.save()
   context = Context({ 'object': obj })
   return render_to_response('mailfriend/sent.html', context, context_instance=RequestContext(request))
-  
-  
-  
