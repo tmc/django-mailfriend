@@ -26,6 +26,6 @@ def get_mail_to_friend_url(obj):
                                         model=obj._meta.module_name)
         return reverse('mailfriend.views.mail_item_to_friend_form', 
                         args=[base62.from_decimal(content_type.pk),
-                              base62.from_decimal(obj.pk)]])
+                              base62.from_decimal(obj.pk)])
     except AttributeError:
         return ''
