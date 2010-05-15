@@ -7,18 +7,25 @@ register = template.Library()
 
 @register.simple_tag
 def get_mail_to_friend_url(obj):
-  """
-  Given an object, returns the URL for its "mail to friend" URL. The object
-  must have a get_absolute_url method. If it does not, this template tag
-  will fail silently.
-  """
-  if hasattr(obj, 'get_absolute_url'):
+    """
+    Given an object, returns its "mail to friend" URL 
+    (:view:`mailfriend.views.mail_item_to_friend_form`).
+    
+    *Note:* The object must have a ``get_absolute_url`` method. 
+    If it does not, this template tag will fail silently.
+    
+    Example::
+    
+        {% get_mail_to_friend_url obj %}
+        
+    """
     try:
-      content_type = ContentType.objects.get_for_model(obj)
-      return reverse('mailfriend.views.mail_item_to_friend_form',
-                     args=[base62.from_decimal(content_type.pk),
-                           base62.from_decimal(obj.pk)])
-    except:
-      return ''
-  else:
-    return ''
+        obj.get_absolute_url()
+        content_type = ContentType.objects.get(
+                                        app_label=obj._meta.app_label, 
+                                        model=obj._meta.module_name)
+        return reverse('mailfriend.views.mail_item_to_friend_form', 
+                        args=[base62.from_decimal(content_type.pk),
+                              base62.from_decimal(obj.pk)]])
+    except AttributeError:
+        return ''
